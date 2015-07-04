@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import rocket.Producer;
 import bean.School;
 import cn.edu.fudan.se.dac.Condition;
 import cn.edu.fudan.se.dac.DACFactory;
@@ -17,6 +18,10 @@ import cn.edu.fudan.se.dac.DataAccessInterface;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.rocketmq.client.exception.MQClientException;
+import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.alibaba.rocketmq.common.message.Message;
 
 /**
  * Servlet implementation class AddSchoolServlet
@@ -49,7 +54,7 @@ public class AddSchoolServlet extends HttpServlet {
 		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/html");
 
-		//获得输入的Jason格式字符串
+		//获得输入的Json格式字符串
 		StringBuffer sb = new StringBuffer();
 		String line = null;
 		try {
@@ -65,7 +70,17 @@ public class AddSchoolServlet extends HttpServlet {
 		//解析Jason
 		School school = (School)JSON.parseObject(sb.toString(),School.class);
 		String schoolName = school.getSchoolName();
-
+		
+	    try {
+			Producer p = new Producer("addSchoolConflictionProducer","G4-addSchoolConfliction","TagAll",schoolName);
+		} catch (MQClientException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	    
+		
+/*
 		//根据add的返回值以json格式返回结果信息
 		PrintWriter out = response.getWriter();
 		JSONObject object = new JSONObject();
@@ -93,7 +108,7 @@ public class AddSchoolServlet extends HttpServlet {
 		out.flush();
 		out.close();
 
-		System.out.println(schoolDAC.commit());
+		System.out.println(schoolDAC.commit());*/
 	}
 
 }

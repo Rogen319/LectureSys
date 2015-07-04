@@ -7,8 +7,8 @@ import cn.edu.fudan.se.dac.DataAccessInterface;
 
 public class ConflictionCheck {
 	
-	public boolean addSchoolConfliction(String schoolName){
-		boolean isExist = false;
+	public static String addSchoolConfliction(String schoolName){
+		String isExist = "1";
 		DataAccessInterface<School> schoolDAC = DACFactory.getInstance().createDAC(School.class);
 		schoolDAC.beginTransaction();
 		Condition<School> condition = new Condition<School>() {
@@ -18,7 +18,7 @@ public class ConflictionCheck {
 			}
 		};
 		if(schoolDAC.selectByCondition(condition).size() != 0){
-			isExist = true;
+			isExist = "2";//"2"表示学院名称已存在
 		}
 		return isExist;
 	}

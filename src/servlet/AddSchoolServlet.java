@@ -29,7 +29,7 @@ import com.alibaba.rocketmq.common.message.Message;
 @WebServlet("/addSchoolInfo")
 public class AddSchoolServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public static int addSchoolWait = 0;
+	public static String addSchoolWait = "0";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -78,11 +78,33 @@ public class AddSchoolServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-	    while(addSchoolWait==0){  	
+	    while(addSchoolWait.equals("0")){  	
 	    }
 	    
-	    if(addSchoolWait == 1){
+	    if(addSchoolWait.equals("1")){//表示没有冲突的情况
+	    	try {
+				Producer p2 = new Producer("addSchoolProducer","G4-addSchool","TagA",schoolName);
+			} catch (MQClientException | InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    	
+	    	PrintWriter out = response.getWriter();
+	    	JSONObject object = new JSONObject();
+	    	object.put("success", true);
+			object.put("failReason", "");
+			out.write(object.toString());
+			out.flush();
+			out.close();
+	    	
+	    }else if(addSchoolWait.equals("2")){//表示存在冲突，院系已经存在
+	    	PrintWriter out = response.getWriter();
+	    	JSONObject object = new JSONObject();
+	    	object.put("success", false);
+			object.put("failReason", "院系名称已存在");
+			out.write(object.toString());
+			out.flush();
+			out.close();
 	    }
 	    
 	    

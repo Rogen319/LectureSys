@@ -8,7 +8,7 @@ import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
 
 public class Producer {
-	public Producer(String name, String topic, String tag, 
+	public Producer(String name, String topic, String tag,String key, 
 			String body) throws MQClientException, InterruptedException {
 		/**
 		 * 一个应用创建一个Producer，由应用来维护此对象，可以设置为全局对象或者单例<br>
@@ -36,13 +36,12 @@ public class Producer {
 		try {
 			Message msg = new Message(topic,// topic
 					tag,// tag
-					"master",// key
+					key,// key
 					(body).getBytes());// body
 			SendResult sendResult = producer.send(msg);
 			System.out.println(sendResult);
 		} catch (Exception e) {
 			e.printStackTrace();
-			TimeUnit.MILLISECONDS.sleep(1000);
 		}
 
 		/**

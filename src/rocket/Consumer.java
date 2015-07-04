@@ -12,6 +12,7 @@ import com.alibaba.rocketmq.client.exception.MQClientException;
 import com.alibaba.rocketmq.common.message.MessageExt;
 
 import function.ConflictionCheck;
+import function.MyManager;
 
 public class Consumer {
 	/**
@@ -21,7 +22,7 @@ public class Consumer {
 	public static void main(String[] args) throws InterruptedException,
 			MQClientException {
 
-		String tag = "tagA";
+		String tag = "tagM";
 		/**
 		 * 一个应用创建一个Consumer，由应用来维护此对象，可以设置为全局对象或者单例<br>
 		 * 注意：ConsumerGroupName需要由应用来保证唯一
@@ -57,13 +58,15 @@ public class Consumer {
 					System.out.println("sucess add School");
 				} else if (msg.getTopic().equals(
 						"G4-addSchoolConflictionResult")) {
-					AddSchoolServlet.addSchoolWait = new String(msg.getBody());
+					System.out.println("hsajflkasf");
+					MyManager.setMap(Long.parseLong(msg.getKeys()), new String(msg.getBody()));
+					System.out.println(msg.getKeys()+"|||"+new String(msg.getBody()));
 				} else if (msg.getTopic().equals("G4-addSchoolConfliction")) {
 					String tmp = new String(msg.getBody());
 					String result = ConflictionCheck.addSchoolConfliction(tmp);
 					try {
 						Producer p = new Producer("ResultProducer",
-								"G4-addSchoolConflictionResult", "TagM", result);
+								"G4-addSchoolConflictionResult", "TagM",msg.getKeys(), result);
 					} catch (MQClientException | InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

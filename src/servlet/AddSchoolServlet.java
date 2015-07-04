@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.Manager;
+
 import rocket.Producer;
 import bean.School;
 import cn.edu.fudan.se.dac.Condition;
@@ -23,13 +25,14 @@ import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.alibaba.rocketmq.common.message.Message;
 
+import function.MyManager;
+
 /**
  * Servlet implementation class AddSchoolServlet
  */
 @WebServlet("/addSchoolInfo")
 public class AddSchoolServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public static String addSchoolWait = "0";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -50,6 +53,11 @@ public class AddSchoolServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//Get the id
+		long id = MyManager.dispatchID();
+		String status = "0";
+		MyManager.setMap(id, status);
+		
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
 		response.setContentType("textml");
@@ -72,18 +80,18 @@ public class AddSchoolServlet extends HttpServlet {
 		String schoolName = school.getSchoolName();
 		
 	    try {
-			Producer p = new Producer("addSchoolConflictionProducer","G4-addSchoolConfliction","TagAll",schoolName);
+			Producer p = new Producer("addSchoolConflictionProducer","G4-addSchoolConfliction","TagAll",""+id,schoolName);
 		} catch (MQClientException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	    while(addSchoolWait.equals("0")){  	
+		System.out.println(MyManager.getMap(id));
+	    while(("0").equals(MyManager.getMap(id))){
 	    }
 	    
-	    if(addSchoolWait.equals("1")){//表示没有冲突的情况
+	    if(("1").equals(MyManager.getMap(id))){//表示没有冲突的情况
 	    	try {
-				Producer p2 = new Producer("addSchoolProducer","G4-addSchool","TagA",schoolName);
+				Producer p2 = new Producer("addSchoolProducer","G4-addSchool","TagA",""+id,schoolName);
 			} catch (MQClientException | InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -97,7 +105,7 @@ public class AddSchoolServlet extends HttpServlet {
 			out.flush();
 			out.close();
 	    	
-	    }else if(addSchoolWait.equals("2")){//表示存在冲突，院系已经存在
+	    }else if(("2").equals(MyManager.getMap(id))){//表示存在冲突，院系已经存在
 	    	PrintWriter out = response.getWriter();
 	    	JSONObject object = new JSONObject();
 	    	object.put("success", false);

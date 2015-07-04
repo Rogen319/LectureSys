@@ -31,7 +31,7 @@ public class Consumer {
        /**
         * 订阅指定topic下tags分别等于TagA或TagC或TagD
         */
-       consumer.subscribe("G4-seleteCourse", "TagA || TagC || TagD");
+       consumer.subscribe("G4-addSchool", "TagA");
        /**
         * 订阅指定topic下所有消息<br>
         * 注意：一个consumer对象可以订阅多个topic
@@ -49,20 +49,8 @@ public class Consumer {
                        + " Receive New Messages: " + msgs.size());
 
                MessageExt msg = msgs.get(0);
-               if (msg.getTopic().equals("G4-seleteCourse")) {
-                   // 执行TopicTest1的消费逻辑
-                   if (msg.getTags() != null && msg.getTags().equals("TagA")) {
-                       // 执行TagA的消费
-                       System.out.println(new String(msg.getBody())+"tagA");
-                   } else if (msg.getTags() != null
-                           && msg.getTags().equals("TagC")) {
-                       // 执行TagC的消费
-                	   System.out.println(new String(msg.getBody())+"tagC");
-                   } else if (msg.getTags() != null
-                           && msg.getTags().equals("TagD")) {
-                       // 执行TagD的消费
-                	AddSchoolServlet.addSchoolWait = 1;
-                   }
+               if (msg.getTopic().equals("G4-addSchool")) {
+            	   System.out.println("sucess");
                } else if (msg.getTopic().equals("G4-addSchoolConfliction")) {
             	   AddSchoolServlet.addSchoolWait = 1;
                    System.out.println(new String(msg.getBody()));

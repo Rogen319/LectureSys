@@ -88,7 +88,7 @@ public class AddSchoolServlet extends HttpServlet {
 		System.out.println(MyManager.getMap(id));
 	    while(("0").equals(MyManager.getMap(id))){
 	    }
-	    
+	    System.out.println(MyManager.getMap(id));
 	    if(("1").equals(MyManager.getMap(id))){//表示没有冲突的情况
 	    	try {
 				Producer p2 = new Producer("addSchoolProducer","G4-addSchool","TagA",""+id,schoolName);

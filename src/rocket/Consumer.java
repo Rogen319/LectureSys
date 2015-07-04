@@ -22,7 +22,7 @@ public class Consumer {
 	public static void main(String[] args) throws InterruptedException,
 			MQClientException {
 
-		String tag = "tagM";
+		String tag = "TagM";
 		/**
 		 * 一个应用创建一个Consumer，由应用来维护此对象，可以设置为全局对象或者单例<br>
 		 * 注意：ConsumerGroupName需要由应用来保证唯一
@@ -56,11 +56,10 @@ public class Consumer {
 				MessageExt msg = msgs.get(0);
 				if (msg.getTopic().equals("G4-addSchool")) {
 					System.out.println("sucess add School");
-				} else if (msg.getTopic().equals(
-						"G4-addSchoolConflictionResult")) {
+				} else if (msg.getTopic().equals("G4-addSchoolConflictionResult")) {
 					System.out.println("hsajflkasf");
 					MyManager.setMap(Long.parseLong(msg.getKeys()), new String(msg.getBody()));
-					System.out.println(msg.getKeys()+"|||"+new String(msg.getBody()));
+					System.out.println(msg.getKeys()+"|||"+MyManager.getMap(Long.parseLong(msg.getKeys())));
 				} else if (msg.getTopic().equals("G4-addSchoolConfliction")) {
 					String tmp = new String(msg.getBody());
 					String result = ConflictionCheck.addSchoolConfliction(tmp);

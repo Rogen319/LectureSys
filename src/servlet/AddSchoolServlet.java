@@ -29,7 +29,7 @@ import com.alibaba.rocketmq.common.message.Message;
 @WebServlet("/addSchoolInfo")
 public class AddSchoolServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	public static int addSchoolWait = 0;
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -52,7 +52,7 @@ public class AddSchoolServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		response.setCharacterEncoding("utf-8");
-		response.setContentType("text/html");
+		response.setContentType("textml");
 
 		//获得输入的Json格式字符串
 		StringBuffer sb = new StringBuffer();
@@ -78,6 +78,13 @@ public class AddSchoolServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
+	    while(addSchoolWait==0){  	
+	    }
+	    
+	    if(addSchoolWait == 1){
+	    	
+	    }
+	    
 	    
 		
 /*

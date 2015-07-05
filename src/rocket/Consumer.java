@@ -2,8 +2,6 @@ package rocket;
 
 import java.util.List;
 
-import servlet.AddSchoolServlet;
-
 import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -58,8 +56,15 @@ public class Consumer {
 					System.out.println("sucess add School");
 				} else if (msg.getTopic().equals("G4-addSchoolConflictionResult")) {
 					System.out.println("hsajflkasf");
-					MyManager.setMap(Long.parseLong(msg.getKeys()), new String(msg.getBody()));
-					System.out.println(msg.getKeys()+"|||"+MyManager.getMap(Long.parseLong(msg.getKeys())));
+					long id = Long.parseLong(msg.getKeys());
+					System.out.println("This is id: " + id);
+					synchronized (MyManager.lockObject) {
+						System.out.println("to be notified!");
+						MyManager.getMap(id, new String(msg.getBody()));
+						(MyManager.lockObject).notify();
+						System.out.println("notified!");
+					}
+					System.out.println(msg.getKeys()+"|||"+MyManager.getMap(Long.parseLong(msg.getKeys()),null));
 				} else if (msg.getTopic().equals("G4-addSchoolConfliction")) {
 					String tmp = new String(msg.getBody());
 					String result = ConflictionCheck.addSchoolConfliction(tmp);
